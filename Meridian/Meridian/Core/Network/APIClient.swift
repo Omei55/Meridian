@@ -34,7 +34,7 @@ class APIClient {
 
     static let shared = APIClient()
 
-    private let baseURL = "http://localhost:3000"
+    private let baseURL = "https://meridian-api-production-3bb7.up.railway.app"
 
     private init() {}
 
