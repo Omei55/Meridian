@@ -78,7 +78,8 @@ class AuthManager {
                 ]
             )
 
-            KeychainManager.shared.saveToken(response.token)
+            KeychainManager.shared.saveToken(response.accessToken)
+            KeychainManager.shared.saveRefreshToken(response.refreshToken)
             currentUser = response.user
             MessagingState.shared.startListening(userId: response.user.id)
 
@@ -116,7 +117,8 @@ class AuthManager {
                 ]
             )
 
-            KeychainManager.shared.saveToken(response.token)
+            KeychainManager.shared.saveToken(response.accessToken)
+            KeychainManager.shared.saveRefreshToken(response.refreshToken)
             currentUser = response.user
             MessagingState.shared.startListening(userId: response.user.id)
             
@@ -128,7 +130,20 @@ class AuthManager {
     }
 
     func logout() {
+        // Notify backend to invalidate the refresh token
+        // Fire and forget — we don't need to wait for this
+        if let refreshToken = KeychainManager.shared.getRefreshToken() {
+            Task {
+                let _: [String: Bool]? = try? await APIClient.shared.request(
+                    endpoint: "/auth/logout",
+                    method: "POST",
+                    body: ["refreshToken": refreshToken]
+                )
+            }
+        }
+        
         KeychainManager.shared.deleteToken()
+        KeychainManager.shared.deleteRefreshToken()
         currentUser = nil
         errorMessage = nil
     }
