@@ -14,8 +14,19 @@
 		70D4642F2FD54D9A00768FF6 /* FirebaseCore in Frameworks */ = {isa = PBXBuildFile; productRef = 70D4642E2FD54D9A00768FF6 /* FirebaseCore */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXContainerItemProxy section */
+		7069C58E3007297300BABDD9 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 7043DDDC2FD5396C00E871CB /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 7043DDE32FD5396C00E871CB;
+			remoteInfo = Meridian;
+		};
+/* End PBXContainerItemProxy section */
+
 /* Begin PBXFileReference section */
 		7043DDE42FD5396C00E871CB /* Meridian.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Meridian.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		7069C58A3007297300BABDD9 /* MeridianTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MeridianTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -37,6 +48,11 @@
 			path = Meridian;
 			sourceTree = "<group>";
 		};
+		7069C58B3007297300BABDD9 /* MeridianTests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = MeridianTests;
+			sourceTree = "<group>";
+		};
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -52,6 +68,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		7069C5873007297300BABDD9 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -59,6 +82,7 @@
 			isa = PBXGroup;
 			children = (
 				7043DDE62FD5396C00E871CB /* Meridian */,
+				7069C58B3007297300BABDD9 /* MeridianTests */,
 				70D4642D2FD54D9A00768FF6 /* Frameworks */,
 				7043DDE52FD5396C00E871CB /* Products */,
 			);
@@ -68,6 +92,7 @@
 			isa = PBXGroup;
 			children = (
 				7043DDE42FD5396C00E871CB /* Meridian.app */,
+				7069C58A3007297300BABDD9 /* MeridianTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -109,6 +134,29 @@
 			productReference = 7043DDE42FD5396C00E871CB /* Meridian.app */;
 			productType = "com.apple.product-type.application";
 		};
+		7069C5893007297300BABDD9 /* MeridianTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 7069C5923007297300BABDD9 /* Build configuration list for PBXNativeTarget "MeridianTests" */;
+			buildPhases = (
+				7069C5863007297300BABDD9 /* Sources */,
+				7069C5873007297300BABDD9 /* Frameworks */,
+				7069C5883007297300BABDD9 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				7069C58F3007297300BABDD9 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				7069C58B3007297300BABDD9 /* MeridianTests */,
+			);
+			name = MeridianTests;
+			packageProductDependencies = (
+			);
+			productName = MeridianTests;
+			productReference = 7069C58A3007297300BABDD9 /* MeridianTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -116,11 +164,15 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
-				LastSwiftUpdateCheck = 2650;
+				LastSwiftUpdateCheck = 2660;
 				LastUpgradeCheck = 2650;
 				TargetAttributes = {
 					7043DDE32FD5396C00E871CB = {
 						CreatedOnToolsVersion = 26.5;
+					};
+					7069C5893007297300BABDD9 = {
+						CreatedOnToolsVersion = 26.6;
+						TestTargetID = 7043DDE32FD5396C00E871CB;
 					};
 				};
 			};
@@ -142,12 +194,20 @@
 			projectRoot = "";
 			targets = (
 				7043DDE32FD5396C00E871CB /* Meridian */,
+				7069C5893007297300BABDD9 /* MeridianTests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
 		7043DDE22FD5396C00E871CB /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		7069C5883007297300BABDD9 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -164,7 +224,22 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		7069C5863007297300BABDD9 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		7069C58F3007297300BABDD9 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 7043DDE32FD5396C00E871CB /* Meridian */;
+			targetProxy = 7069C58E3007297300BABDD9 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		7043DDED2FD5396E00E871CB /* Debug */ = {
@@ -354,6 +429,46 @@
 			};
 			name = Release;
 		};
+		7069C5903007297300BABDD9 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.omkar.MeridianTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Meridian.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Meridian";
+			};
+			name = Debug;
+		};
+		7069C5913007297300BABDD9 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.omkar.MeridianTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Meridian.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Meridian";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -371,6 +486,15 @@
 			buildConfigurations = (
 				7043DDF02FD5396E00E871CB /* Debug */,
 				7043DDF12FD5396E00E871CB /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		7069C5923007297300BABDD9 /* Build configuration list for PBXNativeTarget "MeridianTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				7069C5903007297300BABDD9 /* Debug */,
+				7069C5913007297300BABDD9 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

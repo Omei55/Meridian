@@ -39,18 +39,20 @@ struct Assignment: Codable, Identifiable {
         return pgFormatter.date(from: dueDate)
     }
     var relativeDeadline: String {
-        guard let date = dueDateFormatted else {
-            return "No deadline"
-        }
-
-        let days = Calendar.current
-            .dateComponents([.day], from: .now, to: date)
-            .day ?? 0
-
+        guard let date = dueDateFormatted else { return "No deadline" }
+        
+        // Compare calendar start-of-day, not exact timestamps
+        // This ensures "tomorrow at 9am" is always "Due tomorrow"
+        // regardless of what time it currently is
+        let calendar = Calendar.current
+        let startOfToday = calendar.startOfDay(for: Date())
+        let startOfDueDate = calendar.startOfDay(for: date)
+        
+        let days = calendar.dateComponents([.day], from: startOfToday, to: startOfDueDate).day ?? 0
+        
         if days < 0 { return "Past due" }
         if days == 0 { return "Due today" }
         if days == 1 { return "Due tomorrow" }
-
         return "Due in \(days) days"
     }
 
