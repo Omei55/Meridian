@@ -53,11 +53,11 @@ struct LoginView: View {
                                         .fill(Color.white.opacity(0.15))
                                         .frame(width: 74, height: 74)
                                     
-                                    Image("meridian-logo")
-                                        .resizable()
-                                        .scaledToFit()
-                                        .frame(width: 48, height: 48)
-                                        .clipShape(Circle())
+//                                    Image("meridian-logo")
+//                                        .resizable()
+//                                        .scaledToFit()
+//                                        .frame(width: 48, height: 48)
+//                                        .clipShape(Circle())
                                 }
                                 
                                 Text("Meridian")
@@ -183,11 +183,14 @@ struct LoginView: View {
                             }
                             
                             Button {
+                                // Light haptic tap on button press
+                                let generator = UIImpactFeedbackGenerator(style: .medium)
+                                generator.impactOccurred()
+                                
                                 Task {
                                     await viewModel.login()
                                 }
-                            } label: {
-                                HStack {
+                            } label: {                                HStack {
                                     if viewModel.isLoading {
                                         ProgressView()
                                             .tint(.white)

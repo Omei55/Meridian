@@ -161,6 +161,7 @@ struct CreateCourseView: View {
                         }
 
                         Button {
+                            UIImpactFeedbackGenerator(style: .medium).impactOccurred()
                             Task {
                                 await viewModel.createCourse()
                             }

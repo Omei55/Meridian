@@ -285,6 +285,7 @@ struct SubmitAssignmentView: View {
                     }
 
                     Button {
+                        UIImpactFeedbackGenerator(style: .medium).impactOccurred()
                         Task {
                             await submitAssignment()
                         }

@@ -322,6 +322,7 @@ struct MessageInputBar: View {
             }
 
             Button {
+                UIImpactFeedbackGenerator(style: .light).impactOccurred()
                 onSend()
             } label: {
                 Image(systemName: "arrow.up.circle.fill")

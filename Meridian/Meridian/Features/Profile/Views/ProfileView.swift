@@ -193,9 +193,9 @@ struct ProfileView: View {
                         Button("Cancel", role: .cancel) { }
 
                         Button("Log Out", role: .destructive) {
+                            UINotificationFeedbackGenerator().notificationOccurred(.warning)
                             authManager.logout()
-                        }
-                    } message: {
+                        }                    } message: {
                         Text(
                             "Are you sure you want to log out of Meridian?"
                         )

@@ -328,9 +328,9 @@ struct SageInputBar: View {
                 )
             
             Button {
+                UIImpactFeedbackGenerator(style: .light).impactOccurred()
                 onSend()
-            } label: {
-                Image(systemName: isLoading ? "hourglass" : "arrow.up.circle.fill")
+            } label: {                Image(systemName: isLoading ? "hourglass" : "arrow.up.circle.fill")
                     .font(.system(size: 36))
                     .foregroundStyle(
                         text.trimmingCharacters(in: .whitespaces).isEmpty || isLoading

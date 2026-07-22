@@ -297,13 +297,11 @@ struct CreateAssignmentView: View {
                         }
 
                         Button {
+                            UIImpactFeedbackGenerator(style: .medium).impactOccurred()
                             Task {
-                                await viewModel.createAssignment(
-                                    courseId: courseId
-                                )
+                                await viewModel.createAssignment(courseId: courseId)
                             }
-                        } label: {
-                            HStack {
+                        } label: {                            HStack {
                                 if viewModel.isLoading {
                                     ProgressView()
                                         .tint(.white)
