@@ -57,6 +57,8 @@ import SwiftData
             }
             
             lastSyncedAt = Date()
+            // Schedule local reminders for all upcoming assignments
+            NotificationManager.shared.scheduleRemindersForAssignments(upcomingAssignments)
             
         } catch {
             // API failed — we're already showing cached data

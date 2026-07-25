@@ -16,7 +16,7 @@ import assignmentsRoutes from './modules/assignments/assignments.routes'
 import submissionsRoutes from './modules/submissions/submissions.routes'
 import conversationsRoutes from './modules/conversations/conversations.routes'
 import aiRoutes from './modules/ai/ai.routes'
-
+import usersRoutes from './modules/users/users.routes'
 
 const app = express()
 const PORT = process.env.PORT || 3000
@@ -24,16 +24,16 @@ const PORT = process.env.PORT || 3000
 app.use(cors())
 app.use(express.json())
 
+app.use('/users', usersRoutes)
 app.use('/auth', authRoutes)
-
 app.use('/courses', coursesRoutes)
-
 app.use('/courses/:courseId/assignments', assignmentsRoutes)
-
 app.use(
   '/courses/:courseId/assignments/:assignmentId/submissions',
   submissionsRoutes
 )
+app.use('/conversations', conversationsRoutes)
+app.use('/ai', aiRoutes)
 
 app.get('/health', (req, res) => {
   res.json({ status: 'Meridian API is running' })
@@ -42,10 +42,5 @@ app.get('/health', (req, res) => {
 app.listen(PORT, () => {
   console.log(`Meridian API running on port ${PORT}`)
 })
-// Conversations routes
-app.use('/conversations', conversationsRoutes)
-// AI routes — Sage assistant
-app.use('/ai', aiRoutes)
-
 
 export default app

@@ -12,6 +12,7 @@
 		7043DE032FD540D600E871CB /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = 7043DE022FD540D600E871CB /* FirebaseFirestore */; };
 		70AFF0642FE15DDE006EA2C4 /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = 70AFF0632FE15DDE006EA2C4 /* FirebaseStorage */; };
 		70D4642F2FD54D9A00768FF6 /* FirebaseCore in Frameworks */ = {isa = PBXBuildFile; productRef = 70D4642E2FD54D9A00768FF6 /* FirebaseCore */; };
+		70F71080301571AE00479E69 /* FirebaseMessaging in Frameworks */ = {isa = PBXBuildFile; productRef = 70F7107F301571AE00479E69 /* FirebaseMessaging */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -60,6 +61,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				70F71080301571AE00479E69 /* FirebaseMessaging in Frameworks */,
 				7043DE012FD540D600E871CB /* FirebaseDatabase in Frameworks */,
 				7043DDFF2FD540D600E871CB /* FirebaseAuth in Frameworks */,
 				70D4642F2FD54D9A00768FF6 /* FirebaseCore in Frameworks */,
@@ -129,6 +131,7 @@
 				7043DE022FD540D600E871CB /* FirebaseFirestore */,
 				70D4642E2FD54D9A00768FF6 /* FirebaseCore */,
 				70AFF0632FE15DDE006EA2C4 /* FirebaseStorage */,
+				70F7107F301571AE00479E69 /* FirebaseMessaging */,
 			);
 			productName = Meridian;
 			productReference = 7043DDE42FD5396C00E871CB /* Meridian.app */;
@@ -366,6 +369,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = Meridian/Meridian.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = ZB36F88L23;
@@ -400,6 +404,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = Meridian/Meridian.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = ZB36F88L23;
@@ -537,6 +542,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 7043DDFD2FD540D600E871CB /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
 			productName = FirebaseCore;
+		};
+		70F7107F301571AE00479E69 /* FirebaseMessaging */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 7043DDFD2FD540D600E871CB /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseMessaging;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

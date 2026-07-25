@@ -8,6 +8,7 @@
 import Foundation
 import Observation
 import FirebaseAuth
+import UserNotifications
 
 @Observable
 class AuthManager {

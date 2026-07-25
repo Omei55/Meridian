@@ -33,6 +33,10 @@ class LoginViewModel {
             email: email.trimmingCharacters(in: .whitespaces),
             password: password
         )
+        // Request notification permission after successful login
+        if AuthManager.shared.isAuthenticated {
+            _ = await NotificationManager.shared.requestPermission()
+        }
 
         if let error = AuthManager.shared.errorMessage {
             errorMessage = error

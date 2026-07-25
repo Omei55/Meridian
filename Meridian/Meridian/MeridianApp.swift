@@ -8,6 +8,7 @@
 import SwiftUI
 import FirebaseCore
 import SwiftData
+@UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
 
 @main
 struct MeridianApp: App {
@@ -28,16 +29,20 @@ struct MeridianApp: App {
 
     var body: some Scene {
         WindowGroup {
-            if authManager.isAuthenticated {
-                if authManager.isProfessor {
-                    ProfessorTabView()
+            Group {
+                if authManager.isAuthenticated {
+                    if authManager.isProfessor {
+                        ProfessorTabView()
+                    } else {
+                        StudentTabView()
+                    }
                 } else {
-                    StudentTabView()
+                    LoginView()
                 }
-            } else {
-                LoginView()
             }
+            .preferredColorScheme(.light)
         }
         .environment(authManager)
+        .modelContainer(container)
     }
 }
