@@ -22,3 +22,19 @@ export const getDeviceToken = async (userId: string) => {
     )
     return result.rows[0]?.device_token || null
 }
+// GET DEVICE INFO
+// Returns device token and full name for a specific user
+// Called by our Firebase Cloud Function to send push notifications
+export const getDeviceInfo = async (userId: string) => {
+    const result = await pool.query(
+        `SELECT device_token, full_name FROM users WHERE id = $1`,
+        [userId]
+    )
+    
+    if (result.rows.length === 0) return null
+    
+    return {
+        deviceToken: result.rows[0].device_token,
+        senderName: result.rows[0].full_name
+    }
+}

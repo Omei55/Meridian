@@ -8,10 +8,12 @@
 import SwiftUI
 import FirebaseCore
 import SwiftData
-@UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
+
 
 @main
+
 struct MeridianApp: App {
+    @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
 
     @State private var authManager = AuthManager.shared
     let container: ModelContainer = {

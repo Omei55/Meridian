@@ -35,7 +35,10 @@ class LoginViewModel {
         )
         // Request notification permission after successful login
         if AuthManager.shared.isAuthenticated {
-            _ = await NotificationManager.shared.requestPermission()
+            let granted = await NotificationManager.shared.requestPermission()
+            if granted {
+                NotificationManager.shared.registerForPushNotifications()
+            }
         }
 
         if let error = AuthManager.shared.errorMessage {
