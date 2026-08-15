@@ -413,11 +413,26 @@ struct DocumentPicker: UIViewControllerRepresentable {
                 return
             }
 
-            defer { url.stopAccessingSecurityScopedResource() }
+            // Read the file data immediately while we still have access
+            // Copy it to a temporary location so we can use it later
+            // even after security-scoped access is revoked
+            let fileName = url.lastPathComponent
+            let tempURL = FileManager.default.temporaryDirectory
+                .appendingPathComponent(UUID().uuidString)
+                .appendingPathExtension("pdf")
 
-            parent.selectedFileURL = url
-            parent.selectedFileName = url.lastPathComponent
-            parent.onFilePicked()
+            do {
+                let data = try Data(contentsOf: url)
+                try data.write(to: tempURL)
+
+                parent.selectedFileURL = tempURL
+                parent.selectedFileName = fileName
+                parent.onFilePicked()
+            } catch {
+                print("Failed to copy picked file: \(error)")
+            }
+
+            url.stopAccessingSecurityScopedResource()
         }
     }
 }

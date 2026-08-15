@@ -152,15 +152,15 @@ struct ProfileView: View {
                             value: "1.0.0 (Phase 1)"
                         )
 
-                        Divider()
-                            .padding(.leading, 56)
+//                        Divider()
+//                            .padding(.leading, 56)
 
-                        ProfileRow(
-                            icon: "sparkles",
-                            iconColor: "F59E0B",
-                            title: "AI Assistant",
-                            value: "Sage (Coming in Phase 3)"
-                        )
+//                        ProfileRow(
+//                            icon: "sparkles",
+//                            iconColor: "F59E0B",
+//                            title: "AI Assistant",
+//                            value: "Sage (Coming in Phase 3)"
+//                        )
                     }
                     .background(.white)
                     .clipShape(.rect(cornerRadius: 16))
