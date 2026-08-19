@@ -38,3 +38,9 @@ export const getDeviceInfo = async (userId: string) => {
         senderName: result.rows[0].full_name
     }
 }
+export const deleteAccount = async (userId: string) => {
+    await pool.query(
+        `DELETE FROM users WHERE id = $1`,
+        [userId]
+    )
+}

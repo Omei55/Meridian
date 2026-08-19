@@ -20,6 +20,7 @@ export const saveDeviceToken = async (req: Request, res: Response) => {
         res.status(500).json({ error: error.message })
     }
 }
+
 // GET DEVICE INFO
 // Public endpoint called by Cloud Function — no auth needed
 // since it's called server-to-server, not from a client app
@@ -36,6 +37,16 @@ export const getDeviceInfo = async (req: Request, res: Response) => {
         
         res.status(200).json(info)
         
+    } catch (error: any) {
+        res.status(500).json({ error: error.message })
+    }
+}
+// DELETE ACCOUNT
+// Permanently deletes the logged in user's account
+export const deleteAccount = async (req: Request, res: Response) => {
+    try {
+        await usersService.deleteAccount(req.user!.userId)
+        res.status(200).json({ success: true })
     } catch (error: any) {
         res.status(500).json({ error: error.message })
     }

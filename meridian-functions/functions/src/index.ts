@@ -1,30 +1,72 @@
-/**
- * Import function triggers from their respective submodules:
- *
- * import {onCall} from "firebase-functions/v2/https";
- * import {onDocumentWritten} from "firebase-functions/v2/firestore";
- *
- * See a full list of supported triggers at https://firebase.google.com/docs/functions
- */
-
 import {setGlobalOptions} from "firebase-functions";
+import {onDocumentCreated} from "firebase-functions/v2/firestore";
+import {initializeApp} from "firebase-admin/app";
+import {getMessaging} from "firebase-admin/messaging";
+import {getFirestore} from "firebase-admin/firestore";
+import axios from "axios";
 
-// Start writing functions
-// https://firebase.google.com/docs/functions/typescript
-
-// For cost control, you can set the maximum number of containers that can be
-// running at the same time. This helps mitigate the impact of unexpected
-// traffic spikes by instead downgrading performance. This limit is a
-// per-function limit. You can override the limit for each function using the
-// `maxInstances` option in the function's options, e.g.
-// `onRequest({ maxInstances: 5 }, (req, res) => { ... })`.
-// NOTE: setGlobalOptions does not apply to functions using the v1 API. V1
-// functions should each use functions.runWith({ maxInstances: 10 }) instead.
-// In the v1 API, each function can only serve one request per container, so
-// this will be the maximum concurrent request count.
 setGlobalOptions({maxInstances: 10});
 
-// export const helloWorld = onRequest((request, response) => {
-//   logger.info("Hello logs!", {structuredData: true});
-//   response.send("Hello from Firebase!");
-// });
+initializeApp();
+
+const BACKEND_URL = "https://meridian-api-production-3bb7.up.railway.app";
+
+export const onNewMessage = onDocumentCreated(
+  "conversations/{conversationId}/messages/{messageId}",
+  async (event: any) => {
+    const snapshot = event.data;
+    if (!snapshot) return;
+
+    const messageData = snapshot.data();
+    const conversationId = event.params.conversationId;
+
+    const db = getFirestore();
+    const conversationDoc = await db
+      .collection("conversations")
+      .doc(conversationId)
+      .get();
+
+    const conversationData = conversationDoc.data();
+    if (!conversationData) return;
+
+    const senderId = messageData.senderId;
+    const participants: string[] = conversationData.participants || [];
+    const recipientId = participants.find((id) => id !== senderId);
+
+    if (!recipientId) return;
+
+    try {
+      const response = await axios.get(
+        `${BACKEND_URL}/users/${recipientId}/device-info`
+      );
+
+      const {deviceToken, senderName} = response.data;
+
+      if (!deviceToken) {
+        console.log(`No device token for user ${recipientId}`);
+        return;
+      }
+
+      const message = {
+        token: deviceToken,
+        notification: {
+          title: senderName || "New Message",
+          body: messageData.text || "You have a new message",
+        },
+        apns: {
+          payload: {
+            aps: {
+              sound: "default",
+              badge: 1,
+            },
+          },
+        },
+      };
+
+      await getMessaging().send(message);
+      console.log(`Push notification sent to ${recipientId}`);
+    } catch (error) {
+      console.error("Error sending push notification:", error);
+    }
+  }
+);

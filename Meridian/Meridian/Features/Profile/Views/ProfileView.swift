@@ -12,6 +12,10 @@ struct ProfileView: View {
     @Environment(AuthManager.self) private var authManager
 
     @State private var showLogoutAlert = false
+    @State private var showDeleteAccountAlert = false
+    @State private var showDeleteConfirmationAlert = false
+    @State private var isDeletingAccount = false
+    @State private var deleteError: String?
 
     var body: some View {
         NavigationStack {
@@ -200,6 +204,50 @@ struct ProfileView: View {
                             "Are you sure you want to log out of Meridian?"
                         )
                     }
+                    // MARK: — Delete Account Button
+                    Button {
+                        showDeleteAccountAlert = true
+                    } label: {
+                        HStack {
+                            Image(systemName: "trash")
+                            Text("Delete Account")
+                                .fontWeight(.semibold)
+                        }
+                        .frame(maxWidth: .infinity)
+                        .frame(height: 52)
+                        .background(Color.red.opacity(0.08))
+                        .foregroundStyle(.red)
+                        .clipShape(.rect(cornerRadius: 14))
+                    }
+                    .padding(.top, 8)
+                    // First confirmation — explains what will happen
+                    .alert("Delete Account", isPresented: $showDeleteAccountAlert) {
+                        Button("Cancel", role: .cancel) {}
+                        Button("Continue", role: .destructive) {
+                            showDeleteConfirmationAlert = true
+                        }
+                    } message: {
+                        Text("This will permanently delete your account and all your data — courses, assignments, submissions, and messages. This cannot be undone.")
+                    }
+                    // Second confirmation — final safety check
+                    .alert("Are you absolutely sure?", isPresented: $showDeleteConfirmationAlert) {
+                        Button("Cancel", role: .cancel) {}
+                        Button("Delete Permanently", role: .destructive) {
+                            Task {
+                                await deleteAccount()
+                            }
+                        }
+                    } message: {
+                        Text("Your account cannot be recovered after deletion.")
+                    }
+
+                    // Error message if deletion fails
+                    if let error = deleteError {
+                        Text(error)
+                            .font(.caption)
+                            .foregroundStyle(.red)
+                            .padding(.top, 4)
+                    }
                 }
                 .padding(20)
             }
@@ -208,6 +256,33 @@ struct ProfileView: View {
             .navigationTitle("Profile")
             .navigationBarTitleDisplayMode(.large)
         }
+    }
+    // MARK: — Delete Account
+    // Calls backend to permanently delete the account
+    // then logs out and clears all local data
+    func deleteAccount() async {
+        isDeletingAccount = true
+        deleteError = nil
+        
+        do {
+            struct DeleteResponse: Codable {
+                let success: Bool
+            }
+            
+            let _: DeleteResponse = try await APIClient.shared.request(
+                endpoint: "/users/me",
+                method: "DELETE"
+            )
+            
+            // Account deleted successfully — log out and clear everything
+            UINotificationFeedbackGenerator().notificationOccurred(.success)
+            authManager.logout()
+            
+        } catch {
+            deleteError = "Failed to delete account. Please try again."
+        }
+        
+        isDeletingAccount = false
     }
 }
 

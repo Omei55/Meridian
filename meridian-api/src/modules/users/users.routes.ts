@@ -12,3 +12,6 @@ export default router
 // GET /users/:id/device-info
 // Called by Firebase Cloud Function to get recipient's push token
 router.get('/:id/device-info', usersController.getDeviceInfo)
+// DELETE /users/me
+// Deletes the logged in user's account permanently
+router.delete('/me', authenticate, usersController.deleteAccount)
