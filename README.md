@@ -1,250 +1,217 @@
-# Meridian — AI-Powered Academic Productivity Platform
+# Meridian: AI-Powered Academic Productivity Platform
 
-> "I designed and built an AI-powered academic productivity platform with contextual document intelligence and realtime collaboration systems."
+[![App Store](https://img.shields.io/badge/App%20Store-Download-blue?logo=apple&logoColor=white)](https://apps.apple.com/us/app/meridian-academic-ai/id6793667755)
+
+**Live on the App Store:** [Meridian: Academic AI](https://apps.apple.com/us/app/meridian-academic-ai/id6793667755)
+
+Meridian is an iOS platform for students and professors with an AI study assistant called Sage. I designed and built every layer myself: the SwiftUI app, the Node.js and PostgreSQL backend, the realtime messaging, the RAG pipeline behind Sage, the production deployment, and the App Store release.
 
 ---
 
 ## Why I Built This
 
-Most academic platforms feel like glorified file storage. Students upload assignments, professors download them, nothing in between adds any intelligence to the process.
+Canvas went down during finals week at ASU, and it made me notice how little intelligence there is in the tools students depend on every day. Students upload assignments, professors download them, and nothing in between helps anyone understand or plan their work.
 
-I wanted to build something different — a platform where AI actually understands your coursework. Where a student can ask "what is this assignment asking me to do?" and get a real, contextual answer based on the actual assignment PDF. Where deadlines are extracted automatically. Where study plans are generated from course material.
-
-Meridian is my flagship portfolio project for Summer 2026. It is built to production standards — not as a tutorial exercise, but as a real application I intend to ship on the App Store.
-
-The goal is to demonstrate full-stack engineering, iOS expertise, AI integration, realtime systems, and product thinking — all in one cohesive project.
+Meridian is my attempt at something different. A student can open an assignment and ask "what is this actually asking me to do?" and get an answer based on the real assignment PDF, not a generic response.
 
 ---
 
-## What Makes Meridian Different
+## What Makes It Different
 
-This is **not** a Canvas clone.
-
-Meridian is an **assignment intelligence platform**. The core differentiator is an AI assistant called **Sage** — powered by a RAG (Retrieval-Augmented Generation) pipeline that reads assignment PDFs, understands their content, and answers student questions contextually.
+Meridian is not a Canvas clone. The core feature is **Sage**, an AI assistant powered by a RAG (Retrieval-Augmented Generation) pipeline that reads the actual assignment PDF and answers questions about it.
 
 Sage can:
 - Summarize what an assignment is asking
-- Extract deadlines from uploaded documents
-- Explain specific requirements
-- Create personalized study plans
-- Answer questions like "What does requirement 3 mean?"
+- Explain specific requirements in plain language
+- Clarify deadlines
+- Suggest a way to plan and approach the work
 
-Sage will **not** complete assignments, generate final answers, or do academic work on behalf of students. Academic integrity is a core design principle.
+Sage will not complete assignments or write graded work for students. That rule is enforced in the system prompt, and I tested it by asking Sage to just solve an assignment. It declined and offered to explain the concept instead.
+
+---
+
+## Features
+
+**Students**
+- Join courses with a course code
+- Dashboard with a deadline strip and enrolled courses
+- Tasks tab grouping every assignment into overdue, due soon, and upcoming
+- Assignment detail with a native PDF viewer
+- Submit a PDF for any assignment
+- Ask Sage about a specific assignment
+- Message professors of courses they are enrolled in
+
+**Professors**
+- Create courses and share a join code
+- Create, edit, and delete assignments with optional PDF attachments
+- View and grade submissions
+- Grading tab showing which assignments still have ungraded submissions
+- Message students enrolled in their courses
+
+**Platform**
+- Role-based access for professor and student accounts
+- JWT access tokens with refresh tokens
+- Offline caching with a visible "showing cached data" state and retry
+- In-app account deletion with a two step confirmation
+- Realtime messaging with typing indicators, read receipts, and unread badges
 
 ---
 
 ## Tech Stack
 
-### iOS (Frontend)
-- SwiftUI
-- MVVM Architecture
-- async/await networking
+**iOS**
+- SwiftUI with MVVM
+- `@Observable` view models
+- async/await and structured concurrency
 - SwiftData for offline caching
-- Firebase Storage for file uploads
+- Keychain for token storage
+- Apple's Testing framework for unit tests
 
-### Backend
-- Node.js + Express
-- TypeScript
+**Backend**
+- Node.js, Express, TypeScript
 - PostgreSQL
-- JWT Authentication
-- Role-based access control
+- JWT authentication with refresh tokens
+- Role-based access control middleware
+- Deployed on Railway
 
-### AI (Phase 3)
-- OpenAI API (GPT-4o + Embeddings)
-- Pinecone Vector Database
-- Custom RAG Pipeline
-- PDF ingestion and chunking
+**AI**
+- OpenAI `text-embedding-3-small` for embeddings
+- GPT-4o for responses
+- Pinecone for vector storage and similarity search
+- PDF text extraction and chunking with overlap
 
-### Realtime & Infrastructure
-- Firebase Firestore (messaging)
-- Firebase Auth
-- APNs / FCM (push notifications)
+**Realtime and Infrastructure**
+- Firebase Firestore for messaging
+- Firebase Storage for PDF uploads
+- Firebase Cloud Functions, FCM, and APNs for push notifications
 
 ---
 
 ## Architecture
 
 ```
-iOS Client (SwiftUI)
-      ↓
-REST API (Node.js + Express + TypeScript)
-      ↓
-PostgreSQL (users, courses, assignments, submissions)
-      ↓
-AI Service (RAG pipeline → Pinecone → GPT-4o)
-      ↓
-Firebase (realtime messaging + file storage)
+iOS Client (SwiftUI, MVVM)
+      |
+      v
+REST API (Node.js, Express, TypeScript) on Railway
+      |
+      +--> PostgreSQL (users, courses, enrollments, assignments,
+      |                submissions, conversations, refresh tokens)
+      |
+      +--> AI Service
+      |       PDF -> chunks -> OpenAI embeddings -> Pinecone
+      |       Question -> embedding -> similarity search -> GPT-4o
+      |
+      +--> Firebase
+              Firestore (messages), Storage (PDFs),
+              Cloud Function -> FCM -> APNs (push notifications)
 ```
 
----
+### How Sage works
 
-## Development Phases
-
-### ✅ Phase 1 — LMS Foundation (Current)
-The core academic platform. Authentication, course management, assignment uploads, file submissions.
-
-### 🔜 Phase 2 — Messaging & Notifications
-Realtime professor-student messaging with Firestore. Typing indicators, read receipts, push notifications via APNs.
-
-### 🔜 Phase 3 — AI Assistant (Sage)
-RAG pipeline with PDF ingestion, vector embeddings, and contextual question answering.
-
-### 🔜 Phase 4 — Polish & App Store
-Production UI/UX, error handling, analytics, TestFlight beta, App Store submission.
+1. A professor uploads an assignment PDF.
+2. The backend downloads it, extracts the text, and splits it into overlapping chunks.
+3. Each chunk is embedded with OpenAI and stored in Pinecone with the assignment id as metadata.
+4. When a student asks a question, it is embedded with the same model.
+5. Pinecone returns the most similar chunks for that one assignment, using cosine similarity.
+6. The chunks, plus the assignment title and due date, go to GPT-4o with a system prompt that tells it to explain and never solve.
 
 ---
 
-## What's Built — Phase 1
+## API Overview
 
-### Backend API (Node.js + Express + TypeScript)
+**Auth**
+- `POST /auth/register`
+- `POST /auth/login`
+- `POST /auth/refresh`
+- `POST /auth/logout`
 
-Complete REST API with the following modules:
-
-**Authentication**
-- `POST /auth/register` — Register as professor or student
-- `POST /auth/login` — Login and receive JWT token
-- JWT-based authentication on all protected routes
-- Role-based middleware (professor vs student access control)
+**Users**
+- `POST /users/device-token`
+- `DELETE /users/me`
 
 **Courses**
-- `GET /courses` — Get all courses (professors see their own, students see enrolled)
-- `POST /courses` — Create a course (professor only)
-- `GET /courses/:id` — Get a single course
-- `POST /courses/:id/enroll` — Enroll in a course (student only)
-- `DELETE /courses/:id/enroll` — Unenroll from a course
+- `GET /courses`
+- `POST /courses`
+- `GET /courses/search?code=`
+- `GET /courses/:id`
+- `POST /courses/:id/enroll`
+- `DELETE /courses/:id/enroll`
 
 **Assignments**
-- `GET /courses/:courseId/assignments` — Get all assignments for a course
-- `POST /courses/:courseId/assignments` — Create an assignment with optional PDF (professor only)
-- `GET /courses/:courseId/assignments/:id` — Get a single assignment
-- `PATCH /courses/:courseId/assignments/:id` — Update an assignment
-- `DELETE /courses/:courseId/assignments/:id` — Delete an assignment
+- `GET /courses/:courseId/assignments`
+- `POST /courses/:courseId/assignments`
+- `GET /courses/:courseId/assignments/:id`
+- `PATCH /courses/:courseId/assignments/:id`
+- `DELETE /courses/:courseId/assignments/:id`
 
 **Submissions**
-- `POST /courses/:courseId/assignments/:assignmentId/submissions` — Submit an assignment (student only)
-- `GET /courses/:courseId/assignments/:assignmentId/submissions` — View all submissions (professor only)
-- `GET /courses/:courseId/assignments/:assignmentId/submissions/me` — View own submission (student only)
-- `PATCH /courses/:courseId/assignments/:assignmentId/submissions/:id` — Grade a submission (professor only)
+- `POST /courses/:courseId/assignments/:assignmentId/submissions`
+- `GET /courses/:courseId/assignments/:assignmentId/submissions`
+- `GET /courses/:courseId/assignments/:assignmentId/submissions/me`
+- `PATCH /courses/:courseId/assignments/:assignmentId/submissions/:id`
 
-**Database Schema**
-- `users` — professors and students with role enforcement
-- `courses` — owned by professors
-- `enrollments` — student-course relationships (unique constraint prevents duplicate enrollments)
-- `assignments` — belong to courses, optional PDF attachment
-- `submissions` — one per student per assignment (unique constraint enforced at DB level)
+**Conversations**
+- `GET /conversations`
+- `POST /conversations`
+- `GET /conversations/messageable-users`
+- `PATCH /conversations/:id/last-message`
 
----
-
-### iOS App (SwiftUI + MVVM)
-
-#### Authentication Screens
-
-**Login Screen**
-- Email and password fields
-- Role-aware navigation — professors route to professor dashboard, students to student dashboard
-- JWT token stored securely in Keychain
-- Error states and loading indicators
-
-**Register Screen**
-- Full name, email, password fields
-- Role picker (Student / Professor)
-- Validates all fields before submission
-
----
-
-#### Student Portal
-
-**Student Dashboard**
-- Personalized greeting header
-- Upcoming deadlines strip — assignments sorted by due date
-- Enrolled courses grid
-- Deadline badges: green (>3 days), amber (1–3 days), red (due today/overdue)
-
-**My Courses**
-- List of all enrolled courses
-- Course code and professor name displayed
-- Join Course button — enter a course code to enroll
-
-**Course Detail**
-- Course header with title and description
-- Assignment list sorted by due date
-- Tap any assignment to open detail view
-
-**Assignment Detail**
-- Title, description, due date badge
-- PDF viewer (native QuickLook)
-- Submit button — opens file picker
-- Shows submission status if already submitted
-- *(Phase 3 hook: Sage AI assistant button)*
-
-**Submit Assignment**
-- Native document picker
-- Selected file preview
-- Upload to Firebase Storage
-- Posts download URL to backend
-
----
-
-#### Professor Portal
-
-**Professor Dashboard**
-- Stats row: total courses, assignments, submissions
-- My courses list
-- Quick actions: Create Course, View Submissions
-
-**Create Course**
-- Title, description, course code fields
-- Auto-generates shareable course code
-- Posts to backend and refreshes dashboard
-
-**Course Detail (Professor)**
-- Course info header
-- Enrolled students count
-- Assignments list
-- Add Assignment button
-
-**Create Assignment**
-- Title, description fields
-- Due date picker
-- Optional PDF attachment
-- Uploads file to Firebase Storage, posts metadata to backend
-
-**Submissions List**
-- Per-assignment view of all student submissions
-- Student name, submission time, status badge
-- Download link for each submitted file
-- Grade input field
+**AI**
+- `POST /ai/ingest/:assignmentId`
+- `POST /ai/chat`
+- `GET /ai/summarize/:assignmentId`
 
 ---
 
 ## Database Schema
 
-```sql
-users        — id, email, password_hash, full_name, role, created_at
-courses      — id, professor_id, title, description, course_code, is_active, created_at
-enrollments  — id, student_id, course_id, enrolled_at
-assignments  — id, course_id, title, description, file_url, due_date, created_at
-submissions  — id, assignment_id, student_id, file_url, status, grade, submitted_at
 ```
+users           id, email, password_hash, full_name, role, device_token, created_at
+courses         id, professor_id, title, description, course_code, is_active, created_at
+enrollments     id, student_id, course_id, enrolled_at
+assignments     id, course_id, title, description, file_url, due_date, created_at
+submissions     id, assignment_id, student_id, file_url, status, grade, submitted_at
+conversations   id, participant_one, participant_two, course_id, assignment_id,
+                last_message, last_message_time, created_at
+refresh_tokens  id, user_id, token, expires_at, created_at
+```
+
+Foreign keys use `ON DELETE CASCADE` where child rows have no meaning without their parent. Conversations use `ON DELETE SET NULL` for course and assignment links so message history survives if a course is deleted. Enrollments and submissions have unique constraints so a student cannot enroll twice or submit twice.
 
 ---
 
 ## Key Engineering Decisions
 
-**Why PostgreSQL over NoSQL**
-Meridian's data is highly relational — courses belong to professors, assignments belong to courses, submissions belong to both assignments and students. PostgreSQL enforces these relationships at the database level with foreign keys and cascade rules. NoSQL would require enforcing this in application code, which is error-prone.
+**PostgreSQL for core data, Firestore for messages.** Courses, assignments, and submissions are deeply relational, so PostgreSQL enforces the relationships at the database level. Chat messages are high volume and benefit from Firestore's realtime listeners, so they live there instead.
 
-**Why JWT over session auth**
-iOS apps are stateless clients. JWTs allow the server to verify identity without storing session state, making the API horizontally scalable. Tokens are stored in iOS Keychain, never in UserDefaults.
+**Access and refresh tokens instead of one long-lived token.** Access tokens expire in 15 minutes and a 30 day refresh token renews them silently. If a request returns 401, the app refreshes and retries, so the user only sees a login screen once the refresh token itself expires. Refresh tokens are stored server side, so logout can actually revoke them.
 
-**Why role middleware is centralized**
-Role checks live entirely in Express middleware, not scattered through controller logic. This means adding a new protected route is one line — `requireRole('professor')` — rather than an if-statement inside every handler.
+**RAG instead of fine-tuning.** Professors upload new assignments constantly. With RAG a new PDF is chunked and embedded within seconds and is immediately answerable, with no retraining.
 
-**Why Firebase Storage for files**
-File bytes never touch the Express server. iOS uploads directly to Firebase Storage and sends only the download URL to the backend. This keeps the API server stateless and fast, and offloads bandwidth costs to Firebase.
+**Firestore instead of a custom WebSocket server.** As a solo developer I traded some low level control for reconnection handling, offline support, and listeners that already work. The tradeoff is dependence on Firebase pricing at larger scale.
 
-**Why nested REST routes**
-`/courses/:courseId/assignments/:assignmentId/submissions` makes ownership explicit at the URL level. Middleware can verify course membership before the controller runs, rather than checking inside every handler.
+**Role checks live in middleware.** `requireRole('professor')` is one line on a route, instead of an `if` check repeated in every controller. The backend is where this is enforced. Hiding a button in the app is only a convenience.
+
+**Offline first on the client.** Screens load cached SwiftData first, then refresh from the network in the background. If the refresh fails, the cached data stays on screen with a retry option instead of going blank.
+
+**Files never touch the API server.** The app uploads PDFs straight to Firebase Storage and sends only the download URL to the backend.
+
+---
+
+## Testing
+
+Unit tests use Apple's Testing framework and cover the `Assignment`, `Course`, and `Submission` models and login form validation. Writing them caught a real bug in the deadline logic: "due tomorrow" could display as "due today" depending on the time of day, because it compared exact timestamps instead of calendar days.
+
+---
+
+## Repository Layout
+
+```
+Meridian/             iOS app (SwiftUI)
+meridian-api/         Node.js, Express, TypeScript backend
+meridian-functions/   Firebase Cloud Function for push notifications
+```
 
 ---
 
@@ -253,57 +220,61 @@ File bytes never touch the Express server. iOS uploads directly to Firebase Stor
 ### Backend
 
 ```bash
-# Install dependencies
+cd meridian-api
 npm install
-
-# Set up environment variables
 cp .env.example .env
-# Fill in DATABASE_URL and JWT_SECRET
-
-# Start development server
 npm run dev
 ```
+
+Use Node 20 or later. Earlier versions are missing built-in `fetch`, which the OpenAI and Pinecone SDKs expect.
 
 ### Environment Variables
 
 ```
 DATABASE_URL=postgresql://localhost/meridian
-JWT_SECRET=your_secret_key_here
+JWT_SECRET=your_secret_here
+OPENAI_API_KEY=your_key_here
+PINECONE_API_KEY=your_key_here
+PINECONE_INDEX=meridian
 PORT=3000
 ```
 
-### Database Setup
+### iOS
 
-```sql
--- Run in psql
-CREATE DATABASE meridian;
--- Then run migrations in /migrations folder
-```
+Open `Meridian.xcodeproj` in Xcode, add your own `GoogleService-Info.plist` from a Firebase project, and point `APIClient.baseURL` at your backend.
+
+---
+
+## Known Limitations
+
+- Push notification delivery is not fully verified end to end. Device token registration and the Cloud Function trigger work, but live delivery to a device was still hitting an APNs credential error when I last tested. In-app messaging is unaffected.
+- Deleting an account removes the user and all PostgreSQL data through cascades, but does not yet remove that user's messages from Firestore.
+- Sage uses a prompt-level guardrail for academic integrity. It reduces misuse but is not an airtight guarantee.
+- Dark mode is not supported. The app is locked to light mode.
 
 ---
 
 ## Roadmap
 
-- [x] PostgreSQL schema design
-- [x] JWT authentication with role-based access
-- [x] Courses module (CRUD + enrollment)
-- [x] Assignments module (CRUD + file attachment)
-- [x] Submissions module (submit + grade)
-- [ ] iOS SwiftUI app — Login + Register
-- [ ] iOS SwiftUI app — Student dashboard
-- [ ] iOS SwiftUI app — Professor dashboard
-- [ ] iOS SwiftUI app — Assignment detail + PDF viewer
-- [ ] iOS SwiftUI app — File submission flow
-- [ ] Firebase Firestore realtime messaging
-- [ ] Push notifications (APNs)
-- [ ] RAG pipeline (PDF ingestion + Pinecone)
-- [ ] Sage AI assistant
-- [ ] App Store submission
+- [x] PostgreSQL schema and role-based access
+- [x] Courses, assignments, and submissions
+- [x] SwiftUI app for both roles
+- [x] Realtime messaging with Firestore
+- [x] Sage RAG pipeline with OpenAI and Pinecone
+- [x] Refresh token authentication
+- [x] Offline caching with SwiftData
+- [x] Production deployment on Railway
+- [x] App Store release
+- [ ] Finish and verify push notification delivery
+- [ ] Clean up Firestore data on account deletion
+- [ ] Background job queue for PDF ingestion
+- [ ] Dark mode
+- [ ] Android version
 
 ---
 
 ## About
 
-Built by Omkar Sapkal — iOS and full-stack engineer.
+Built by Omkar Sapkal. M.S. in Software Engineering at Arizona State University.
 
-This project is being built in public. Follow the journey on LinkedIn.
+[LinkedIn](https://linkedin.com/in/omkarsapkal) | [App Store](https://apps.apple.com/us/app/meridian-academic-ai/id6793667755)
